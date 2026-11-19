@@ -27,7 +27,8 @@ from word_exporter import export_report
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 KB_PATH = os.path.join(BASE, "knowledge_base.json")
-MOCK_TITLE = "示例视频（mock）"
+MOCK_URL = "https://www.bilibili.com/video/BV1RNH56QEtB"
+MOCK_BVID = "BV1RNH56QEtB"
 
 _BV_RE = re.compile(r"BV[0-9A-Za-z]{10}")
 
@@ -197,16 +198,16 @@ if st.button("生成总结", type="primary", disabled=not url.strip()):
     url = url.strip()
 
     if mock_mode:
-        summary = _mock_summary(MOCK_TITLE)
-        comparison = _mock_compare(load_knowledge_base(KB_PATH), summary)
+        summary = _mock_summary()
+        comparison = _mock_compare()
         try:
-            docx = _export(summary, comparison, MOCK_TITLE, url, "BV_mock")
+            docx = _export(summary, comparison, summary["title"], MOCK_URL, MOCK_BVID)
         except Exception as e:
             st.error(f"Word 文件生成失败：{e}")
             docx = None
         st.session_state["result"] = {
             "summary": summary, "comparison": comparison, "docx": docx,
-            "title": MOCK_TITLE, "url": url, "bvid": "BV_mock",
+            "title": summary["title"], "url": MOCK_URL, "bvid": MOCK_BVID,
         }
     else:
         if not _is_bilibili(url):
